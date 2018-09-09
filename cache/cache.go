@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"log"
 	"microSocket/util"
 	"sync"
 	"time"
@@ -62,7 +63,7 @@ func saveFile() {
 
 	fileLock.Lock()
 	defer fileLock.Unlock()
-
+	log.Println(saveStr)
 	util.WriteFile("./tmp.txt", saveStr)
 }
 
@@ -83,7 +84,9 @@ func init() {
 	loadFile()
 
 	go func() {
-		time.Sleep(time.Second)
-		saveFile()
+		for {
+			time.Sleep(time.Second)
+			saveFile()
+		}
 	}()
 }
