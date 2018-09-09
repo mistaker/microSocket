@@ -4,13 +4,34 @@ import (
 	"fmt"
 	"log"
 	msf "microSocket"
+	"net"
 	"strconv"
 )
 
-var ser = msf.NewMsf()
+var ser = msf.NewMsf(&event{})
 
-//框架逻辑
+//框架事件
+type event struct {
+}
+
+//客户端握手成功事件
+func (this event) OnHandel(fd uint32, conn net.Conn) bool {
+	log.Println(fd, "链接成功类")
+	return true
+}
+
+//断开连接事件
+func (this event) OnClose(fd uint32) {
+	log.Println(fd, "链接断开类")
+}
+
+//接收到消息事件
+func (this event) OnMessage(fd uint32, msg map[string]string) bool {
+	return true
+}
+
 //---------------------------------------------------------------------
+//框架业务逻辑
 type Test struct {
 }
 

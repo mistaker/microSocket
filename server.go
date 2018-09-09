@@ -8,15 +8,23 @@ import (
 	"time"
 )
 
+type MsfEventer interface {
+	OnHandel(fd uint32, conn net.Conn) bool
+	OnClose(fd uint32)
+	OnMessage(fd uint32, msg map[string]string) bool
+}
+
 type Msf struct {
 	EventPool     *RouterMap
 	SessionMaster *SessionM
+	MsfEvent      MsfEventer
 }
 
-func NewMsf() *Msf {
+func NewMsf(msfEvent MsfEventer) *Msf {
 	return &Msf{
 		SessionMaster: NewSessonM(),
 		EventPool:     NewRouterMap(),
+		MsfEvent:      msfEvent,
 	}
 }
 
@@ -34,6 +42,11 @@ func (this *Msf) Listening(address string) {
 			log.Println(err)
 			continue
 		}
+		//调用握手事件
+		if this.MsfEvent.OnHandel(fd, conn) == false {
+			continue
+		}
+
 		sess := NewSession(fd, conn)
 		this.SessionMaster.SetSession(fd, sess)
 		fd++
@@ -45,6 +58,8 @@ func (this *Msf) Listening(address string) {
 func (this *Msf) connHandle(conn net.Conn, sess *session) {
 	defer func() {
 		this.SessionMaster.DelSessionById(sess.id)
+		//调用断开链接事件
+		this.MsfEvent.OnClose(sess.id)
 		conn.Close()
 	}()
 	var errs error
@@ -71,7 +86,6 @@ func (this *Msf) connHandle(conn net.Conn, sess *session) {
 			continue
 		}
 		//把请求的到数据转化为map
-
 		requestData := util.String2Map(string(data))
 		if requestData["module"] == "" || requestData["action"] == "" || this.EventPool.ModuleExit(requestData["module"]) == false {
 			log.Println("not find module ", requestData)
@@ -79,6 +93,11 @@ func (this *Msf) connHandle(conn net.Conn, sess *session) {
 		}
 		requestData["fd"] = fmt.Sprintf("%d", sess.id)
 
+		//调用接收消息事件
+		if this.MsfEvent.OnMessage(sess.id, requestData) == false {
+			return
+		}
+		//路由
 		this.EventPool.Hook(requestData["module"], requestData["action"], requestData)
 
 	}
