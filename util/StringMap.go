@@ -7,6 +7,9 @@ import (
 
 //把map转化为string  "a:b|"
 func Map2String(msg map[string]string) string {
+	if len(msg) == 0 {
+		return ""
+	}
 	data := ""
 	for i, v := range msg {
 		data += fmt.Sprintf("%v:%v|", i, v)
@@ -19,7 +22,7 @@ func String2Map(msg string) map[string]string {
 	data := make(map[string]string)
 	tempData := strings.Split(msg, "|")
 
-	if len(tempData) <= 1 {
+	if len(tempData) < 1 {
 		return data
 	}
 
