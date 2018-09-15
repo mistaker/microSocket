@@ -1,62 +1,63 @@
 package microSocket
 
 import (
-	"log"
 	"net"
 	"sync"
 	"time"
 )
 
-//-------------------------------------------一个session代表一个连接------------------------------------------
-type session struct {
-	id    uint32
-	con   net.Conn
+//---------------------------------------------一个session代表一个连接--------------------------------------------------
+type Session struct {
+	Id    uint32
+	Con   net.Conn
 	times int64
 	lock  sync.Mutex
 }
 
-func NewSession(id uint32, con net.Conn) *session {
-	return &session{
-		id:    id,
-		con:   con,
+func NewSession(id uint32, con net.Conn) *Session {
+	return &Session{
+		Id :    id,
+		Con:   con,
 		times: time.Now().Unix(),
 	}
 }
 
-func (this *session) Write(msg string) error {
+func (this *Session) Write(msg string) error {
 	this.lock.Lock()
 	defer this.lock.Unlock()
-	_ ,errs := this.con.Write([]byte(msg))
+	_ ,errs := this.Con.Write([]byte(msg))
 	return errs
 }
 
-func (this *session)Close(){
-	this.con.Close()
+func (this *Session)Close(){
+	this.Con.Close()
 }
-
-//.......................................SESSION管理类.......................................
+//---------------------------------------------------SESSION管理类------------------------------------------------------
 
 type SessionM struct {
-	sessions map[uint32]*session
+	sessions map[uint32]*Session
 	num      uint32
 	lock     sync.RWMutex
+	isWebSocket bool
+	ser     *Msf
 }
 
-func NewSessonM() *SessionM {
+func NewSessonM(msf *Msf) *SessionM {
 	return &SessionM{
-		sessions: make(map[uint32]*session),
+		sessions: make(map[uint32]*Session),
 		num:      0,
+		ser : msf,
 	}
 }
 
-func (this *SessionM) GetSessionById(id uint32) *session {
+func (this *SessionM) GetSessionById(id uint32) *Session {
 	if v, exit := this.sessions[id]; exit {
 		return v
 	}
 	return nil
 }
 
-func (this *SessionM) SetSession(id uint32, sess *session) {
+func (this *SessionM) SetSession(id uint32, sess *Session) {
 	this.lock.Lock()
 	defer this.lock.Unlock()
 	this.sessions[id] = sess
@@ -72,9 +73,20 @@ func (this *SessionM) DelSessionById(id uint32) {
 	delete(this.sessions, id)
 }
 
-func (this *SessionM) WriteByid(id uint32, msg string) bool {
+//向所有客户端发送消息
+func (this *SessionM) WriteToAll(msg []byte) {
+	for i,_ := range this.sessions {
+		this.WriteByid(i,msg)
+	}
+}
+
+//向单个客户端发送信息
+func (this *SessionM) WriteByid(id uint32, msg []byte) bool {
+	//把消息打包
+	msg = this.ser.SocketType.Pack(msg)
+
 	if v, exit := this.sessions[id]; exit {
-		if err := v.Write(msg); err != nil {
+		if err := v.Write(string(msg)); err != nil {
 			this.DelSessionById(id)
 			return false
 		} else {
@@ -82,13 +94,4 @@ func (this *SessionM) WriteByid(id uint32, msg string) bool {
 		}
 	}
 	return false
-}
-
-func (this *SessionM) WriteToAll(msg string) {
-	for i, v := range this.sessions {
-		if err := v.Write(msg); err != nil {
-			log.Println(err)
-			this.DelSessionById(i)
-		}
-	}
 }

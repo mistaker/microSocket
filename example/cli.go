@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"microSocket"
-	"microSocket/util"
+	ms "jd-test/microSocket-master"
+	"jd-test/microSocket-master/util"
 	"net"
 )
 
@@ -20,8 +20,11 @@ func main() {
 	data["name"] = "jd"
 	//把map转化为string
 	a := []byte(util.Map2String(data))
+
 	//把string打包
-	b := microSocket.Enpack(a)
+	sock := &ms.CommSocket{}
+	b := sock.Pack(a)
+
 	//发送数据
 	conn.Write(b)
 

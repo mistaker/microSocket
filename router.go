@@ -2,7 +2,7 @@ package microSocket
 
 import (
 	"log"
-	"microSocket/util"
+	"jd-test/microSocket-master/util"
 	"reflect"
 )
 
@@ -12,7 +12,7 @@ type module interface {
 	AfterRequest(data map[string]string)
 }
 
-//.......................全局路由.......................................
+//--------------------------------------------------全局路由------------------------------------------------------------
 
 type RouterMap struct {
 	pools util.SafeMap
@@ -26,10 +26,10 @@ func (this *RouterMap) Register(name string, modules module) {
 	this.pools.Set(name, modules)
 }
 
-func (this *RouterMap) Hook(name string, funcName string, values map[string]string) {
-	item := this.pools.Get(name)
+func (this *RouterMap) Hook(moduleName string, funcName string, values map[string]string) {
+	item := this.pools.Get(moduleName)
 	if item == nil {
-		log.Println("not find module " + name)
+		log.Println("not find module " + moduleName)
 		return
 	}
 

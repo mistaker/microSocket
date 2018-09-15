@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	msf "microSocket"
+	msf "jd-test/microSocket-master"
 	"net"
-	"strconv"
 )
 
-var ser = msf.NewMsf(&event{})
+var ser = msf.NewMsf(&event{},&msf.WebSocket{})
 
 //框架事件
+//----------------------------------------------------------------------------------------------------------------------
 type event struct {
 }
 
@@ -29,14 +28,13 @@ func (this event) OnClose(fd uint32) {
 func (this event) OnMessage(fd uint32, msg map[string]string) bool {
 	return true
 }
-
-//---------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 //框架业务逻辑
 type Test struct {
 }
 
 func (this Test) Default() {
-	fmt.Println("is default")
+	log.Println("default")
 }
 
 func (this Test) BeforeRequest(data map[string]string) bool {
@@ -49,13 +47,10 @@ func (this Test) AfterRequest(data map[string]string) {
 }
 
 func (this Test) Hello(data map[string]string) {
-	fd, _ := strconv.Atoi(data["fd"])
 	log.Println("收到消息了")
-	ser.SessionMaster.WriteByid(uint32(fd), "Hello")
+	ser.SessionMaster.WriteToAll([]byte("hahahhaa"))
 }
-
-//---------------------------------------------------------------------
-
+//----------------------------------------------------------------------------------------------------------------------
 func main() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Llongfile)
 	ser.EventPool.Register("test", &Test{})
