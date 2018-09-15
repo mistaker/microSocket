@@ -1,30 +1,30 @@
 package microSocket
 
 import (
-	"io"
-	"encoding/binary"
-	"bytes"
-	"fmt"
-	"log"
-	"jd-test/microSocket-master/util"
 	"bufio"
-	"strings"
+	"bytes"
 	"crypto/sha1"
 	"encoding/base64"
+	"encoding/binary"
+	"fmt"
+	"io"
+	"log"
+	"microSocket/util"
+	"strings"
 )
 
 type WebSocket struct {
 }
 
 //ws接收消息
-func (this *WebSocket)ConnHandle(msf *Msf, sess *Session){
+func (this *WebSocket) ConnHandle(msf *Msf, sess *Session) {
 	defer func() {
-		msf.SessionMaster.DelSessionById(sess.Id )
+		msf.SessionMaster.DelSessionById(sess.Id)
 		//调用断开链接事件
-		msf.MsfEvent.OnClose(sess.Id )
+		msf.MsfEvent.OnClose(sess.Id)
 	}()
 
-	if this.Handshake(sess) == false{
+	if this.Handshake(sess) == false {
 		return
 	}
 
@@ -80,7 +80,7 @@ func (this *WebSocket)ConnHandle(msf *Msf, sess *Session){
 		io.ReadFull(sess.Con, buf)
 		if mask == 1 {
 			for i, v := range buf {
-				buf[i] = v ^ mKey[i % 4]
+				buf[i] = v ^ mKey[i%4]
 			}
 		}
 
@@ -94,9 +94,9 @@ func (this *WebSocket)ConnHandle(msf *Msf, sess *Session){
 			log.Println("not find module ", requestData)
 			continue
 		}
-		requestData["fd"] = fmt.Sprintf("%d", sess.Id )
+		requestData["fd"] = fmt.Sprintf("%d", sess.Id)
 		//调用接收消息事件
-		if msf.MsfEvent.OnMessage(sess.Id , requestData) == false {
+		if msf.MsfEvent.OnMessage(sess.Id, requestData) == false {
 			return
 		}
 		//路由
@@ -105,7 +105,7 @@ func (this *WebSocket)ConnHandle(msf *Msf, sess *Session){
 }
 
 //websocket 打包事件
-func (this *WebSocket)Pack(data []byte)[]byte{
+func (this *WebSocket) Pack(data []byte) []byte {
 	length := len(data)
 	frame := []byte{129}
 	switch {
@@ -148,7 +148,7 @@ func (this *WebSocket) Handshake(sess *Session) bool {
 		}
 	}
 	sha := sha1.New()
-	io.WriteString(sha, key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+	io.WriteString(sha, key+"258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
 	key = base64.StdEncoding.EncodeToString(sha.Sum(nil))
 
 	header := "HTTP/1.1 101 Switching Protocols\r\n" +
@@ -159,4 +159,3 @@ func (this *WebSocket) Handshake(sess *Session) bool {
 	sess.Con.Write([]byte(header))
 	return true
 }
-

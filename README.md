@@ -1,5 +1,7 @@
 # microSocket
 这是一款十分适合学习的go语言socket框架
+socket 和websocket 一键切换 业务代码完全不用改
+
 
 能够非常简单就实现一个服务端
 
@@ -7,16 +9,19 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	msf "microSocket"
 	"net"
-	"strconv"
 )
 
-var ser = msf.NewMsf(&event{})
+//这里设置是socket还是websocket
+var ser = msf.NewMsf(&event{}, &msf.WebSocket{})
+
+//如果要实现socket的话
+//var ser = msf.NewMsf(&event{}, &msf.CommSocket{})
 
 //框架事件
+//----------------------------------------------------------------------------------------------------------------------
 type event struct {
 }
 
@@ -36,13 +41,13 @@ func (this event) OnMessage(fd uint32, msg map[string]string) bool {
 	return true
 }
 
-//---------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 //框架业务逻辑
 type Test struct {
 }
 
 func (this Test) Default() {
-	fmt.Println("is default")
+	log.Println("default")
 }
 
 func (this Test) BeforeRequest(data map[string]string) bool {
@@ -55,13 +60,11 @@ func (this Test) AfterRequest(data map[string]string) {
 }
 
 func (this Test) Hello(data map[string]string) {
-	fd, _ := strconv.Atoi(data["fd"])
 	log.Println("收到消息了")
-	ser.SessionMaster.WriteByid(uint32(fd), "Hello")
+	ser.SessionMaster.WriteToAll([]byte("hahahhaa"))
 }
 
-//---------------------------------------------------------------------
-
+//----------------------------------------------------------------------------------------------------------------------
 func main() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Llongfile)
 	ser.EventPool.Register("test", &Test{})

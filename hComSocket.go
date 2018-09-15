@@ -1,13 +1,13 @@
 package microSocket
 
 import (
-	"time"
-	"fmt"
-	"log"
-	"jd-test/microSocket-master/util"
-	"errors"
 	"bytes"
 	"encoding/binary"
+	"errors"
+	"fmt"
+	"log"
+	"microSocket/util"
+	"time"
 )
 
 const (
@@ -19,11 +19,11 @@ const (
 type CommSocket struct {
 }
 
-func(this *CommSocket) ConnHandle(msf  *Msf,sess *Session) {
+func (this *CommSocket) ConnHandle(msf *Msf, sess *Session) {
 	defer func() {
-		msf.SessionMaster.DelSessionById(sess.Id )
+		msf.SessionMaster.DelSessionById(sess.Id)
 		//调用断开链接事件
-		msf.MsfEvent.OnClose(sess.Id )
+		msf.MsfEvent.OnClose(sess.Id)
 	}()
 	var errs error
 	tempBuff := make([]byte, 0)
@@ -54,10 +54,10 @@ func(this *CommSocket) ConnHandle(msf  *Msf,sess *Session) {
 			log.Println("not find module ", requestData)
 			continue
 		}
-		requestData["fd"] = fmt.Sprintf("%d", sess.Id )
+		requestData["fd"] = fmt.Sprintf("%d", sess.Id)
 
 		//调用接收消息事件
-		if msf.MsfEvent.OnMessage(sess.Id , requestData) == false {
+		if msf.MsfEvent.OnMessage(sess.Id, requestData) == false {
 			return
 		}
 		//路由
@@ -70,7 +70,7 @@ func (this *CommSocket) Pack(message []byte) []byte {
 }
 
 //解包
-func (this *CommSocket)Depack(buff []byte) ([]byte, []byte, error) {
+func (this *CommSocket) Depack(buff []byte) ([]byte, []byte, error) {
 	length := len(buff)
 
 	//如果包长小于header 就直接返回 因为接收的数据不完整
@@ -93,19 +93,16 @@ func (this *CommSocket)Depack(buff []byte) ([]byte, []byte, error) {
 	return buffs, data, nil
 }
 
-
-func (this *CommSocket)IntToBytes(n int) []byte {
+func (this *CommSocket) IntToBytes(n int) []byte {
 	x := int32(n)
 	bytesBuffer := bytes.NewBuffer([]byte{})
 	binary.Write(bytesBuffer, binary.BigEndian, x)
 	return bytesBuffer.Bytes()
 }
 
-func (this *CommSocket)BytesToInt(b []byte) int {
+func (this *CommSocket) BytesToInt(b []byte) int {
 	bytesBuffer := bytes.NewBuffer(b)
 	var x int32
 	binary.Read(bytesBuffer, binary.BigEndian, &x)
 	return int(x)
 }
-
-

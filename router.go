@@ -2,7 +2,7 @@ package microSocket
 
 import (
 	"log"
-	"jd-test/microSocket-master/util"
+	"microSocket/util"
 	"reflect"
 )
 

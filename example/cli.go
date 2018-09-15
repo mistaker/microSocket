@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	ms "jd-test/microSocket-master"
-	"jd-test/microSocket-master/util"
+	ms "microSocket"
+	"microSocket/util"
 	"net"
 )
 

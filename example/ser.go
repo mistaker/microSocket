@@ -2,11 +2,11 @@ package main
 
 import (
 	"log"
-	msf "jd-test/microSocket-master"
+	msf "microSocket"
 	"net"
 )
 
-var ser = msf.NewMsf(&event{},&msf.WebSocket{})
+var ser = msf.NewMsf(&event{}, &msf.WebSocket{})
 
 //框架事件
 //----------------------------------------------------------------------------------------------------------------------
@@ -28,6 +28,7 @@ func (this event) OnClose(fd uint32) {
 func (this event) OnMessage(fd uint32, msg map[string]string) bool {
 	return true
 }
+
 //----------------------------------------------------------------------------------------------------------------------
 //框架业务逻辑
 type Test struct {
@@ -50,6 +51,7 @@ func (this Test) Hello(data map[string]string) {
 	log.Println("收到消息了")
 	ser.SessionMaster.WriteToAll([]byte("hahahhaa"))
 }
+
 //----------------------------------------------------------------------------------------------------------------------
 func main() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Llongfile)
