@@ -21,7 +21,7 @@ var ser = msf.NewMsf(&event{}, &msf.WebSocket{})
 //var ser = msf.NewMsf(&event{}, &msf.CommSocket{})
 
 //框架事件
-//----------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------
 type event struct {
 }
 
@@ -41,7 +41,7 @@ func (this event) OnMessage(fd uint32, msg map[string]string) bool {
 	return true
 }
 
-//----------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------
 //框架业务逻辑
 type Test struct {
 }
@@ -64,7 +64,7 @@ func (this Test) Hello(data map[string]string) {
 	ser.SessionMaster.WriteToAll([]byte("hahahhaa"))
 }
 
-//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------
 func main() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Llongfile)
 	ser.EventPool.Register("test", &Test{})
