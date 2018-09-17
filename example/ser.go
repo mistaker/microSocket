@@ -26,6 +26,7 @@ func (this event) OnClose(fd uint32) {
 
 //接收到消息事件
 func (this event) OnMessage(fd uint32, msg map[string]string) bool {
+	log.Println("这个是接受消息事件")
 	return true
 }
 
@@ -49,6 +50,7 @@ func (this Test) AfterRequest(data map[string]string) {
 
 func (this Test) Hello(data map[string]string) {
 	log.Println("收到消息了")
+	log.Println(data)
 	ser.SessionMaster.WriteToAll([]byte("hahahhaa"))
 }
 
