@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"microSocket/util"
-	"time"
 )
 
 const (
@@ -29,12 +28,10 @@ func (this *CommSocket) ConnHandle(msf *Msf, sess *Session) {
 	tempBuff := make([]byte, 0)
 	readBuff := make([]byte, 14)
 	data := make([]byte, 20)
-	//设置最迟期限（心跳包）
-	sess.Con.SetReadDeadline(time.Now().Add(time.Duration(8) * time.Second))
 	for {
 		n, err := sess.Con.Read(readBuff)
-		//设置最迟期限（心跳包）
-		sess.Con.SetReadDeadline(time.Now().Add(time.Duration(8) * time.Second))
+		//更新接收时间
+		sess.UpdateTime()
 		if err != nil {
 			return
 		}

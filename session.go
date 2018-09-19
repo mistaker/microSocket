@@ -32,6 +32,10 @@ func (this *Session) Write(msg string) error {
 func (this *Session)Close(){
 	this.Con.Close()
 }
+
+func (this *Session)UpdateTime(){
+	this.times = time.Now().Unix()
+}
 //---------------------------------------------------SESSION管理类------------------------------------------------------
 
 type SessionM struct {
@@ -94,4 +98,16 @@ func (this *SessionM) WriteByid(id uint32, msg []byte) bool {
 		}
 	}
 	return false
+}
+
+//心跳检测   每秒遍历一次 查看所有sess 上次接收消息时间  如果超过 num 就删除该 sess
+func (this *SessionM)HeartBeat(num int64){
+	for {
+		time.Sleep(time.Second)
+		for i,v:= range this.sessions{
+			if time.Now().Unix() - v.times > num {
+				this.DelSessionById(i)
+			}
+		}
+	}
 }

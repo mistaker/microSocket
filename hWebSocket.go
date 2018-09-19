@@ -38,6 +38,7 @@ func (this *WebSocket) ConnHandle(msf *Msf, sess *Session) {
 		length  uint64
 		l       uint16
 		payload byte
+		tembuf  []byte
 	)
 
 	for {
@@ -47,25 +48,20 @@ func (this *WebSocket) ConnHandle(msf *Msf, sess *Session) {
 			break
 		}
 		fin = buf[0] >> 7
-		if fin == 0 {
-		}
 		opcode = buf[0] & 0xf
 		if opcode == 8 {
 			break
 		}
 		mask = buf[1] >> 7
 		payload = buf[1] & 0x7f
-
 		switch {
 		case payload < 126:
 			length = uint64(payload)
-
 		case payload == 126:
 			buf = make([]byte, 2)
 			io.ReadFull(sess.Con, buf)
 			binary.Read(bytes.NewReader(buf), binary.BigEndian, &l)
 			length = uint64(l)
-
 		case payload == 127:
 			buf = make([]byte, 8)
 			io.ReadFull(sess.Con, buf)
@@ -75,7 +71,6 @@ func (this *WebSocket) ConnHandle(msf *Msf, sess *Session) {
 			mKey = make([]byte, 4)
 			io.ReadFull(sess.Con, mKey)
 		}
-
 		buf = make([]byte, length)
 		io.ReadFull(sess.Con, buf)
 		if mask == 1 {
@@ -83,13 +78,18 @@ func (this *WebSocket) ConnHandle(msf *Msf, sess *Session) {
 				buf[i] = v ^ mKey[i%4]
 			}
 		}
-
+		//更新最近接收到消息的时间
+		sess.UpdateTime()
 		if len(buf) == 0 {
 			continue
 		}
-
+		tembuf = append(tembuf,buf...)
+		if fin == 0 {
+			continue
+		}
 		//把请求的到数据转化为map
-		requestData := util.String2Map(string(buf))
+		requestData := util.String2Map(string(tembuf))
+		tembuf = make([]byte,0)
 		if requestData["module"] == "" || requestData["action"] == "" || msf.EventPool.ModuleExit(requestData["module"]) == false {
 			log.Println("not find module ", requestData)
 			continue

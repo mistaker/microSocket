@@ -39,7 +39,7 @@ func (this *Msf) Listening(address string) {
 	if err != nil {
 		panic(err)
 	}
-
+	go this.SessionMaster.HeartBeat(2)
 	fd := uint32(0)
 	for {
 		conn, err := tcpListen.Accept()
