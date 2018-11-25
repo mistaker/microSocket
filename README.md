@@ -14,14 +14,13 @@ import (
 	"net"
 )
 
-//这里设置是socket还是websocket
-var ser = msf.NewMsf(&event{}, &msf.WebSocket{})
+var ser = msf.NewMsf(&msf.CommSocket{})
+//这个决定是socket还是websocket
+//var ser = msf.NewMsf(&msf.WebSocket{})
 
-//如果要实现socket的话
-//var ser = msf.NewMsf(&event{}, &msf.CommSocket{})
 
 //框架事件
-//-----------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 type event struct {
 }
 
@@ -38,16 +37,17 @@ func (this event) OnClose(fd uint32) {
 
 //接收到消息事件
 func (this event) OnMessage(fd uint32, msg map[string]string) bool {
+	log.Println("这个是接受消息事件",msg)
 	return true
 }
-
-//--------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 //框架业务逻辑
 type Test struct {
 }
 
-func (this Test) Default() {
+func (this Test) Default(data map[string]string) bool {
 	log.Println("default")
+	return true
 }
 
 func (this Test) BeforeRequest(data map[string]string) bool {
@@ -55,21 +55,27 @@ func (this Test) BeforeRequest(data map[string]string) bool {
 	return true
 }
 
-func (this Test) AfterRequest(data map[string]string) {
+func (this Test) AfterRequest(data map[string]string) bool{
 	log.Println("after")
+	return true
 }
 
-func (this Test) Hello(data map[string]string) {
+func (this Test) Hello(data map[string]string) bool {
 	log.Println("收到消息了")
+	log.Println(data)
 	ser.SessionMaster.WriteToAll([]byte("hahahhaa"))
+	return true
 }
 
-//----------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------------------------
 func main() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags | log.Llongfile)
-	ser.EventPool.Register("test", &Test{})
+	ser.EventPool.RegisterEvent(&event{})
+	ser.EventPool.RegisterStructFun("test", &Test{})
 	ser.Listening(":8565")
 }
+
 
 ```
 客户端连接成功后发送"module:test|action:Hello"就能 触发相应模块事件

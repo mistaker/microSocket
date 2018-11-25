@@ -1,6 +1,7 @@
 package microSocket
 
 import (
+	"fmt"
 	"log"
 	"net"
 )
@@ -10,24 +11,16 @@ type SocketTypes interface{
 	Pack(data []byte)[]byte
 }
 
-type MsfEventer interface {
-	OnHandel(fd uint32, conn net.Conn) bool
-	OnClose(fd uint32)
-	OnMessage(fd uint32, msg map[string]string) bool
-}
-
 type Msf struct {
-	EventPool     *RouterMap
+	EventPool     *RoutersMap
 	SessionMaster *SessionM
-	MsfEvent      MsfEventer
-	SocketType        SocketTypes
+	SocketType    SocketTypes
 }
 
-func NewMsf(msfEvent MsfEventer,socketType SocketTypes) *Msf {
+func NewMsf(socketType SocketTypes) *Msf {
 	msf := &Msf{
-		EventPool:     NewRouterMap(),
-		MsfEvent:      msfEvent,
-		SocketType   :socketType,
+		EventPool :     NewRoutersMap(),
+		SocketType:     socketType,
 	}
 	msf.SessionMaster = NewSessonM(msf)
 	return msf
@@ -47,18 +40,33 @@ func (this *Msf) Listening(address string) {
 			log.Println(err)
 			continue
 		}
-
 		//调用握手事件
-		if this.MsfEvent.OnHandel(fd, conn) == false {
+		if this.EventPool.OnHandel(fd, conn) == false {
 			continue
 		}
-
-		sess := NewSession(fd, conn)
-		this.SessionMaster.SetSession(fd, sess)
+		this.SessionMaster.SetSession(fd, conn)
+		go this.SocketType.ConnHandle(this,this.SessionMaster.GetSessionById(fd))
 		fd++
-
-		go this.SocketType.ConnHandle(this,sess)
 	}
+}
+
+func (this *Msf) Hook(fd uint32,requestData map[string]string)bool {
+	//调用接收消息事件
+	if this.EventPool.OnMessage(fd, requestData) == false {
+		return false
+	}
+	requestData["fd"] = fmt.Sprintf("%d", fd)
+	//路由
+	if actionName, exit := requestData["action"]; exit {
+		if this.EventPool.HookAction(actionName, requestData) == false {
+			return false
+		}
+	} else {
+		if this.EventPool.HookModule(requestData["module"],requestData["method"],requestData) == false {
+			return false
+		}
+	}
+	return true
 }
 
 

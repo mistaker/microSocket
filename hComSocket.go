@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"log"
 	"microSocket/util"
 )
@@ -22,7 +21,7 @@ func (this *CommSocket) ConnHandle(msf *Msf, sess *Session) {
 	defer func() {
 		msf.SessionMaster.DelSessionById(sess.Id)
 		//调用断开链接事件
-		msf.MsfEvent.OnClose(sess.Id)
+		msf.EventPool.OnClose(sess.Id)
 	}()
 	var errs error
 	tempBuff := make([]byte, 0)
@@ -47,18 +46,9 @@ func (this *CommSocket) ConnHandle(msf *Msf, sess *Session) {
 		}
 		//把请求的到数据转化为map
 		requestData := util.String2Map(string(data))
-		if requestData["module"] == "" || requestData["action"] == "" || msf.EventPool.ModuleExit(requestData["module"]) == false {
-			log.Println("not find module ", requestData)
-			continue
-		}
-		requestData["fd"] = fmt.Sprintf("%d", sess.Id)
-
-		//调用接收消息事件
-		if msf.MsfEvent.OnMessage(sess.Id, requestData) == false {
+		if msf.Hook(sess.Id,requestData) == false {
 			return
 		}
-		//路由
-		msf.EventPool.Hook(requestData["module"], requestData["action"], requestData)
 	}
 }
 

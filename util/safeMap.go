@@ -24,3 +24,5 @@ func (this *SafeMap) Set(k string, v interface{}) {
 	}
 	this.Data[k] = v
 }
+
+

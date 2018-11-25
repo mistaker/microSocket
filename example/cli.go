@@ -16,7 +16,7 @@ func main() {
 
 	data := make(map[string]string)
 	data["module"] = "test"
-	data["action"] = "Hello"
+	data["method"] = "Hello"
 	data["name"] = "jd"
 	//把map转化为string
 	a := []byte(util.Map2String(data))

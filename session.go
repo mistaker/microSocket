@@ -61,10 +61,11 @@ func (this *SessionM) GetSessionById(id uint32) *Session {
 	return nil
 }
 
-func (this *SessionM) SetSession(id uint32, sess *Session) {
+func (this *SessionM) SetSession(fd uint32, conn net.Conn) {
 	this.lock.Lock()
 	defer this.lock.Unlock()
-	this.sessions[id] = sess
+	sess := NewSession(fd, conn)
+	this.sessions[fd] = sess
 }
 
 //关闭连接并删除
