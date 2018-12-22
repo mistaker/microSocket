@@ -40,7 +40,6 @@ func (this *Session)UpdateTime(){
 //---------------------------------------------------SESSION管理类------------------------------------------------------
 
 type SessionM struct {
-	lock     sync.RWMutex
 	isWebSocket bool
 	ser     *Msf
 	sessions sync.Map
@@ -67,8 +66,6 @@ func (this *SessionM) GetSessionById(id uint32) *Session {
 }
 
 func (this *SessionM) SetSession(fd uint32, conn net.Conn) {
-	this.lock.Lock()
-	defer this.lock.Unlock()
 	sess := NewSession(fd, conn)
 	this.sessions.Store(fd,sess)
 }
