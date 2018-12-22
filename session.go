@@ -1,6 +1,7 @@
 package microSocket
 
 import (
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -39,24 +40,28 @@ func (this *Session)UpdateTime(){
 //---------------------------------------------------SESSION管理类------------------------------------------------------
 
 type SessionM struct {
-	sessions map[uint32]*Session
-	num      uint32
 	lock     sync.RWMutex
 	isWebSocket bool
 	ser     *Msf
+	sessions sync.Map
 }
 
 func NewSessonM(msf *Msf) *SessionM {
+	if msf == nil {
+		return nil
+	}
+
 	return &SessionM{
-		sessions: make(map[uint32]*Session),
-		num:      0,
 		ser : msf,
 	}
 }
 
 func (this *SessionM) GetSessionById(id uint32) *Session {
-	if v, exit := this.sessions[id]; exit {
-		return v
+	tem ,exit := this.sessions.Load(id)
+	if exit {
+		if sess, ok := tem.(*Session) ; ok {
+			return sess
+		}
 	}
 	return nil
 }
@@ -65,24 +70,32 @@ func (this *SessionM) SetSession(fd uint32, conn net.Conn) {
 	this.lock.Lock()
 	defer this.lock.Unlock()
 	sess := NewSession(fd, conn)
-	this.sessions[fd] = sess
+	this.sessions.Store(fd,sess)
 }
 
 //关闭连接并删除
 func (this *SessionM) DelSessionById(id uint32) {
-	this.lock.Lock()
-	defer this.lock.Unlock()
-	if v,exit := this.sessions[id];exit{
-		v.Close()
+	tem ,exit := this.sessions.Load(id)
+	if exit {
+		if sess, ok := tem.(*Session) ; ok {
+			sess.Close()
+		}
 	}
-	delete(this.sessions, id)
+	this.sessions.Delete(id)
 }
 
 //向所有客户端发送消息
 func (this *SessionM) WriteToAll(msg []byte) {
-	for i,_ := range this.sessions {
-		this.WriteByid(i,msg)
-	}
+	msg = this.ser.SocketType.Pack(msg)
+	this.sessions.Range(func(key,val interface{})bool{
+		if val, ok := val.(*Session); ok {
+			if err := val.Write(string(msg)); err != nil {
+				this.DelSessionById(key.(uint32))
+				log.Println(err)
+			}
+		}
+		return true
+	})
 }
 
 //向单个客户端发送信息
@@ -90,14 +103,15 @@ func (this *SessionM) WriteByid(id uint32, msg []byte) bool {
 	//把消息打包
 	msg = this.ser.SocketType.Pack(msg)
 
-	if v, exit := this.sessions[id]; exit {
-		if err := v.Write(string(msg)); err != nil {
-			this.DelSessionById(id)
-			return false
-		} else {
-			return true
+	tem ,exit := this.sessions.Load(id)
+	if exit {
+		if sess, ok := tem.(*Session) ; ok {
+			if err := sess.Write(string(msg)); err == nil {
+				return true
+			}
 		}
 	}
+	this.DelSessionById(id)
 	return false
 }
 
@@ -105,10 +119,17 @@ func (this *SessionM) WriteByid(id uint32, msg []byte) bool {
 func (this *SessionM)HeartBeat(num int64){
 	for {
 		time.Sleep(time.Second)
-		for i,v:= range this.sessions{
-			if time.Now().Unix() - v.times > num {
-				this.DelSessionById(i)
+		this.sessions.Range(func (key,val interface{})bool {
+			tem , ok := val.(*Session)
+			if !ok {
+				return true
 			}
-		}
+
+			if time.Now().Unix() - tem.times > num {
+				this.DelSessionById(key.(uint32))
+			}
+			return true
+		})
+
 	}
 }

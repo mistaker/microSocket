@@ -59,7 +59,6 @@ func (this *CommSocket) Pack(message []byte) []byte {
 //解包
 func (this *CommSocket) Depack(buff []byte) ([]byte, []byte, error) {
 	length := len(buff)
-
 	//如果包长小于header 就直接返回 因为接收的数据不完整
 	if length < CONSTHEADERLENGTH+CONSTMLENGTH {
 		return buff, nil, nil
