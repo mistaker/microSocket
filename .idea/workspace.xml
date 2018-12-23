@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b991ac93-5e9b-4a19-ad88-b76a13200021" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/cli.go" beforeDir="false" afterPath="$PROJECT_DIR$/example/cli.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ser.go" beforeDir="false" afterPath="$PROJECT_DIR$/example/ser.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hComSocket.go" beforeDir="false" afterPath="$PROJECT_DIR$/hComSocket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hWebSocket.go" beforeDir="false" afterPath="$PROJECT_DIR$/hWebSocket.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routers.go" beforeDir="false" afterPath="$PROJECT_DIR$/routers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -55,14 +48,14 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="go" value="78" />
-          <entry key="md" value="2" />
+          <entry key="go" value="79" />
+          <entry key="md" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Go" value="78" />
-          <entry key="PLAIN_TEXT" value="2" />
+          <entry key="Go" value="79" />
+          <entry key="PLAIN_TEXT" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -97,61 +90,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server.go">
+        <entry file="file://$PROJECT_DIR$/example/ser.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="9" column="4" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
-              <folding>
-                <element signature="e#21#52#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/session.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="100" column="33" lean-forward="true" selection-start-line="100" selection-start-column="33" selection-end-line="100" selection-end-column="33" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/example/cli.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="26" selection-start-line="26" selection-end-line="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hComSocket.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="56" column="1" lean-forward="true" selection-start-line="56" selection-start-column="1" selection-end-line="56" selection-end-column="1" />
+            <state relative-caret-position="617">
+              <caret line="66" lean-forward="true" selection-end-line="66" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/example/ser.go">
+        <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="54" column="59" selection-start-line="54" selection-start-column="59" selection-end-line="54" selection-end-column="59" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/routers.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1122">
-              <caret line="15" column="17" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="17" />
-              <folding>
-                <element signature="e#21#49#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="481">
+              <caret line="74" lean-forward="true" selection-start-line="74" selection-end-line="74" />
             </state>
           </provider>
         </entry>
@@ -176,7 +127,6 @@
         <option value="$PROJECT_DIR$/util/chanMap.go" />
         <option value="$PROJECT_DIR$/router.go" />
         <option value="$USER_HOME$/Desktop/test.go" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/example/cli.go" />
         <option value="$PROJECT_DIR$/session.go" />
         <option value="$PROJECT_DIR$/hWebSocket.go" />
@@ -184,6 +134,7 @@
         <option value="$PROJECT_DIR$/server.go" />
         <option value="$PROJECT_DIR$/routers.go" />
         <option value="$PROJECT_DIR$/example/ser.go" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -257,7 +208,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.50729334" visible="true" weight="0.18763326" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.50729334" visible="true" weight="0.18763326" />
       <window_info id="Favorites" order="1" sideWeight="0.5008104" side_tool="true" weight="0.1673774" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -268,7 +219,7 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32899022" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.48751357" />
+      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.1324647" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -308,13 +259,6 @@
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Desktop/test.go" />
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="82" column="58" lean-forward="true" selection-start-line="82" selection-start-column="58" selection-end-line="82" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/util/safeMap.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="242">
@@ -336,20 +280,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hWebSocket.go">
+    <entry file="file://$PROJECT_DIR$/hComSocket.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="563">
-          <caret line="123" column="32" selection-start-line="123" selection-start-column="23" selection-end-line="123" selection-end-column="32" />
-          <folding>
-            <element signature="e#21#146#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1650">
+          <caret line="81" column="34" selection-start-line="81" selection-start-column="24" selection-end-line="81" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routers.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1122">
-          <caret line="15" column="17" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="17" />
+        <state relative-caret-position="1650">
+          <caret line="102" column="1" lean-forward="true" selection-start-line="102" selection-start-column="1" selection-end-line="102" selection-end-column="1" />
           <folding>
             <element signature="e#21#49#0" expanded="true" />
           </folding>
@@ -358,7 +299,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/example/cli.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
+        <state relative-caret-position="415">
           <caret line="26" selection-start-line="26" selection-end-line="26" />
         </state>
       </provider>
@@ -380,17 +321,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hComSocket.go">
+    <entry file="file://$PROJECT_DIR$/hWebSocket.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="56" column="1" lean-forward="true" selection-start-line="56" selection-start-column="1" selection-end-line="56" selection-end-column="1" />
+        <state relative-caret-position="563">
+          <caret line="123" column="32" selection-start-line="123" selection-start-column="23" selection-end-line="123" selection-end-column="32" />
+          <folding>
+            <element signature="e#21#146#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/example/ser.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="54" column="59" selection-start-line="54" selection-start-column="59" selection-end-line="54" selection-end-column="59" />
+        <state relative-caret-position="617">
+          <caret line="66" lean-forward="true" selection-end-line="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="481">
+          <caret line="74" lean-forward="true" selection-start-line="74" selection-end-line="74" />
         </state>
       </provider>
     </entry>
