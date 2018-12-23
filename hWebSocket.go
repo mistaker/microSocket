@@ -78,7 +78,7 @@ func (this *WebSocket) ConnHandle(msf *Msf, sess *Session) {
 			}
 		}
 		//更新最近接收到消息的时间
-		sess.UpdateTime()
+		sess.updateTime()
 		if len(buf) == 0 {
 			continue
 		}

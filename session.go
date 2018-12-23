@@ -23,18 +23,18 @@ func NewSession(id uint32, con net.Conn) *Session {
 	}
 }
 
-func (this *Session) Write(msg string) error {
+func (this *Session) write(msg string) error {
 	this.lock.Lock()
 	defer this.lock.Unlock()
 	_ ,errs := this.Con.Write([]byte(msg))
 	return errs
 }
 
-func (this *Session)Close(){
+func (this *Session)close(){
 	this.Con.Close()
 }
 
-func (this *Session)UpdateTime(){
+func (this *Session)updateTime(){
 	this.times = time.Now().Unix()
 }
 //---------------------------------------------------SESSION管理类------------------------------------------------------
@@ -75,7 +75,7 @@ func (this *SessionM) DelSessionById(id uint32) {
 	tem ,exit := this.sessions.Load(id)
 	if exit {
 		if sess, ok := tem.(*Session) ; ok {
-			sess.Close()
+			sess.close()
 		}
 	}
 	this.sessions.Delete(id)
@@ -86,7 +86,7 @@ func (this *SessionM) WriteToAll(msg []byte) {
 	msg = this.ser.SocketType.Pack(msg)
 	this.sessions.Range(func(key,val interface{})bool{
 		if val, ok := val.(*Session); ok {
-			if err := val.Write(string(msg)); err != nil {
+			if err := val.write(string(msg)); err != nil {
 				this.DelSessionById(key.(uint32))
 				log.Println(err)
 			}
@@ -103,7 +103,7 @@ func (this *SessionM) WriteByid(id uint32, msg []byte) bool {
 	tem ,exit := this.sessions.Load(id)
 	if exit {
 		if sess, ok := tem.(*Session) ; ok {
-			if err := sess.Write(string(msg)); err == nil {
+			if err := sess.write(string(msg)); err == nil {
 				return true
 			}
 		}

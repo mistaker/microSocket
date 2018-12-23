@@ -30,5 +30,5 @@ func main() {
 
 	res := make([]byte, 20)
 	conn.Read(res)
-	fmt.Println(res)
+	fmt.Println(string(res))
 }

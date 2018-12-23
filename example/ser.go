@@ -34,25 +34,25 @@ func (this event) OnMessage(fd uint32, msg map[string]string) bool {
 type Test struct {
 }
 
-func (this Test) Default(data map[string]string) bool {
+func (this Test) Default(fd uint32,data map[string]string) bool {
 	log.Println("default")
 	return true
 }
 
-func (this Test) BeforeRequest(data map[string]string) bool {
+func (this Test) BeforeRequest(fd uint32,data map[string]string) bool {
 	log.Println("before")
 	return true
 }
 
-func (this Test) AfterRequest(data map[string]string) bool{
+func (this Test) AfterRequest(fd uint32,data map[string]string) bool{
 	log.Println("after")
 	return true
 }
 
-func (this Test) Hello(data map[string]string) bool {
+func (this Test) Hello(fd uint32,data map[string]string) bool {
 	log.Println("收到消息了")
 	log.Println(data)
-	ser.SessionMaster.WriteToAll([]byte("hahahhaa"))
+	ser.SessionMaster.WriteByid(fd,[]byte("hehehehehehehehe"))
 	return true
 }
 

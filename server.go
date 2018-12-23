@@ -1,7 +1,6 @@
 package microSocket
 
 import (
-	"fmt"
 	"log"
 	"net"
 )
@@ -55,14 +54,14 @@ func (this *Msf) Hook(fd uint32,requestData map[string]string)bool {
 	if this.EventPool.OnMessage(fd, requestData) == false {
 		return false
 	}
-	requestData["fd"] = fmt.Sprintf("%d", fd)
+	//requestData["fd"] = fmt.Sprintf("%d", fd)
 	//路由
 	if actionName, exit := requestData["action"]; exit {
-		if this.EventPool.HookAction(actionName, requestData) == false {
+		if this.EventPool.HookAction(actionName, fd, requestData) == false {
 			return false
 		}
 	} else {
-		if this.EventPool.HookModule(requestData["module"],requestData["method"],requestData) == false {
+		if this.EventPool.HookModule(requestData["module"],requestData["method"], fd, requestData) == false {
 			return false
 		}
 	}

@@ -12,9 +12,9 @@ const (
 )
 
 type module interface {
-	Default(data map[string]string) bool
-	BeforeRequest(data map[string]string) bool
-	AfterRequest(data map[string]string) bool
+	Default(fd uint32,data map[string]string) bool
+	BeforeRequest(fd uint32,data map[string]string) bool
+	AfterRequest(fd uint32,data map[string]string) bool
 }
 
 type eventer interface {
@@ -24,16 +24,16 @@ type eventer interface {
 }
 
 type RoutersMap struct {
-	pools    map[string] func(map[string]string) bool
-	strPools map[string] map[string] func(map[string]string) bool
+	pools    map[string] func(uint32,map[string]string) bool
+	strPools map[string] map[string] func(uint32,map[string]string) bool
 	structs  map[string] module
 	events   eventer
 }
 
 func NewRoutersMap() *RoutersMap{
 	return &RoutersMap{
-		pools :make(map[string]func(map[string]string) bool),
-		strPools:make(map[string]map[string] func(map[string]string) bool),
+		pools :make(map[string]func(uint32,map[string]string) bool),
+		strPools:make(map[string]map[string] func(uint32,map[string]string) bool),
 		structs : make(map[string]module),
 	}
 }
@@ -44,7 +44,7 @@ func (this *RoutersMap) RegisterEvent (events eventer) {
 }
 
 //注册单个逻辑
-func (this *RoutersMap) RegisterFun (methodName string ,funcs func(map[string]string) bool) bool {
+func (this *RoutersMap) RegisterFun (methodName string ,funcs func(uint32 ,map[string]string) bool) bool {
 	if _, exit := this.pools[methodName]; !exit {
 		this.pools[methodName] = funcs
 		return true
@@ -57,46 +57,46 @@ func (this *RoutersMap) RegisterStructFun (moduleName string,mod module) bool {
 	if _, exit := this.strPools[moduleName]; exit {
 		return false
 	}
-	this.strPools[moduleName] = make(map[string] func(map[string]string) bool)
+	this.strPools[moduleName] = make(map[string] func(uint32,map[string]string) bool)
 	this.structs[moduleName] = mod
 
 	temType  := reflect.TypeOf(mod)
 	temValue := reflect.ValueOf(mod)
 	for i := 0 ; i < temType.NumMethod(); i++ {
 		tem := temValue.Method(i).Interface()
-		if temFunc ,ok := tem.(func(map[string]string) bool); ok {
+		if temFunc ,ok := tem.(func(uint32, map[string]string) bool); ok {
 			this.strPools[moduleName][temType.Method(i).Name] = temFunc
 		}
 	}
 	return true
 }
 
-func (this *RoutersMap) HookAction (funcionName string, data map[string]string) bool{
+func (this *RoutersMap) HookAction (funcionName string,fd uint32, data map[string]string) bool{
 	if action ,exit := this.pools[funcionName]; exit {
-		return action(data)
+		return action(fd, data)
 	} else {
 		return false
 	}
 }
 
-func (this *RoutersMap) HookModule(mouleName string, method string, data map[string]string) bool {
+func (this *RoutersMap) HookModule(mouleName string, method string,fd uint32, data map[string]string) bool {
 	if _, exit := this.strPools[mouleName]; !exit {
 		return false
 	}
 
-	if this.strPools[mouleName][BEFORACTION](data) == false {
+	if this.strPools[mouleName][BEFORACTION](fd, data) == false {
 		return false
 	}
 	if action, exit := this.strPools[mouleName][method]; exit {
-		if action(data) == false {
+		if action(fd, data) == false {
 			return false
 		}
 	} else {
-		if this.strPools[mouleName][DEFAULTACTION](data) == false {
+		if this.strPools[mouleName][DEFAULTACTION](fd, data) == false {
 			return false
 		}
 	}
-	if this.strPools[mouleName][AFTERACTION](data) == false {
+	if this.strPools[mouleName][AFTERACTION](fd, data) == false {
 		return false
 	}
 	return true

@@ -30,7 +30,7 @@ func (this *CommSocket) ConnHandle(msf *Msf, sess *Session) {
 	for {
 		n, err := sess.Con.Read(readBuff)
 		//更新接收时间
-		sess.UpdateTime()
+		sess.updateTime()
 		if err != nil {
 			return
 		}
